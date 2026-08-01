@@ -1,8 +1,39 @@
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
-import Hero3D from "../components/Hero3D";
+import ProductImage from "../components/ProductImage";
+
+const HERO_SLIDES = [
+  {
+    bg: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1400&q=85",
+    shoe: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=700&q=85",
+    tag: "New Collection 2025",
+    title: "Step into the future",
+    sub: "Premium sneakers crafted for every stride.",
+  },
+  {
+    bg: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=1400&q=85",
+    shoe: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=700&q=85",
+    tag: "Trail Collection",
+    title: "Built for the wild",
+    sub: "Rugged trail shoes for every terrain.",
+  },
+  {
+    bg: "https://images.unsplash.com/photo-1539185441755-769473a23570?w=800&q=85",
+    shoe: "https://images.unsplash.com/photo-1539185441755-769473a23570?w=800&q=85",
+    tag: "Sports Edition",
+    title: "Perform at your peak",
+    sub: "High-performance shoes for serious athletes.",
+  },
+  {
+    bg: "https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=1400&q=85",
+    shoe: "https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=700&q=85",
+    tag: "Casual Vibes",
+    title: "Style meets comfort",
+    sub: "Everyday sneakers that go with everything.",
+  },
+];
 
 const CATEGORIES = [
   { label: "Running", emoji: "🏃", desc: "Speed & endurance" },
@@ -20,18 +51,9 @@ function ProductCard({ product, index }) {
     >
       <Link to={`/product/${product._id}`} className="block group">
         <div className="bg-[#F0F0EC] rounded-2xl aspect-square mb-3 overflow-hidden relative">
-          {product.images?.[0] ? (
-            <img
-              src={product.images[0]}
-              alt={product.name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="w-14 h-14 rounded-full bg-[#E2E2DC]" />
-            </div>
-          )}
-          {/* Category tag */}
+          <div className="w-full h-full group-hover:scale-105 transition-transform duration-500">
+            <ProductImage src={product.images?.[0]} alt={product.name} />
+          </div>
           <span className="absolute top-2.5 left-2.5 bg-[#C6FF3D] text-[#17181A] text-[10px] font-bold px-2 py-0.5 rounded-full capitalize">
             {product.category}
           </span>
@@ -55,6 +77,108 @@ function ProductCard({ product, index }) {
   );
 }
 
+function HeroSlider() {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const slide = HERO_SLIDES[current];
+
+  return (
+    <section className="my-6 rounded-3xl overflow-hidden bg-[#17181A] min-h-[62vh] flex items-center relative">
+
+      {/* Background — crossfade */}
+      <AnimatePresence>
+        <motion.div
+          key={current + "-bg"}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1 }}
+          className="absolute inset-0"
+        >
+          <img
+            src={slide.bg}
+            alt=""
+            className="w-full h-full object-cover opacity-100"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#17181A] via-[#17181A]/75 to-[#17181A]/20" />
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Text content */}
+      <div className="relative z-10 px-12 py-16 max-w-lg">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={current + "-text"}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.5 }}
+          >
+            <p className="text-[#C6FF3D] text-xs font-semibold uppercase tracking-widest mb-3">
+              {slide.tag}
+            </p>
+            <h1 className="text-white text-5xl font-bold leading-tight mb-4">
+              {slide.title}
+            </h1>
+            <p className="text-white/60 text-sm mb-8 leading-relaxed">
+              {slide.sub}
+            </p>
+            <div className="flex gap-3">
+              <Link
+                to="/shop"
+                className="bg-[#FF4B1F] text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-[#e03d10] transition-colors"
+              >
+                Shop now
+              </Link>
+              
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Right side shoe image — crossfade */}
+      <AnimatePresence>
+        <motion.div
+          key={current + "-shoe"}
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.7 }}
+          className="absolute right-12 bottom-0 h-[90%] hidden lg:block"
+        >
+          <img
+            src={slide.shoe}
+            alt="sneaker"
+            className="h-full w-auto object-contain drop-shadow-2xl"
+          />
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Dot indicators */}
+      <div className="absolute bottom-5 left-12 flex gap-2 z-10">
+        {HERO_SLIDES.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrent(i)}
+            className={`transition-all rounded-full ${
+              i === current
+                ? "w-6 h-2 bg-[#FF4B1F]"
+                : "w-2 h-2 bg-white/30 hover:bg-white/60"
+            }`}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
   const [featured, setFeatured] = useState([]);
 
@@ -66,16 +190,9 @@ export default function Home() {
 
   return (
     <main className="max-w-6xl mx-auto px-6 pb-20">
+
       {/* Hero */}
-      <section className="rounded-3xl overflow-hidden my-6 bg-[#F0F0EC]" style={{ height: "62vh" }}>
-        <Suspense fallback={
-          <div className="w-full h-full flex items-center justify-center text-sm text-[#17181A]/40">
-            Loading 3D...
-          </div>
-        }>
-          <Hero3D />
-        </Suspense>
-      </section>
+      <HeroSlider />
 
       {/* Categories */}
       <section className="mb-14">

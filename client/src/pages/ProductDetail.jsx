@@ -1,26 +1,18 @@
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
-import ProductViewer3D from "../components/ProductViewer3D";
 import { useCartStore } from "../context/cartStore";
+import ProductImage from "../components/ProductImage";
 
 function RecommendationCard({ product }) {
   return (
     <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.2 }}>
       <Link to={`/product/${product._id}`} className="block group">
         <div className="bg-[#F0F0EC] rounded-2xl aspect-square mb-3 overflow-hidden">
-          {product.images?.[0] ? (
-            <img
-              src={product.images[0]}
-              alt={product.name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="w-12 h-12 rounded-full bg-[#E2E2DC]" />
-            </div>
-          )}
+          <div className="w-full h-full group-hover:scale-105 transition-transform duration-300">
+            <ProductImage src={product.images?.[0]} alt={product.name} />
+          </div>
         </div>
         <p className="text-sm font-semibold text-[#17181A] truncate">{product.name}</p>
         <p className="text-sm text-[#17181A]/50 mt-0.5">Rs {product.price?.toLocaleString()}</p>
@@ -46,7 +38,6 @@ export default function ProductDetail() {
     axios.get(`/api/products/${id}`)
       .then((res) => {
         setProduct(res.data);
-        // fetch same-category recommendations
         return axios.get("/api/products", {
           params: { category: res.data.category, limit: 5 },
         });
@@ -79,37 +70,66 @@ export default function ProductDetail() {
     );
   }
 
+  const images = product.images?.length ? product.images : [];
+
   return (
     <main className="max-w-6xl mx-auto px-6 py-8">
-      {/* Main product section */}
       <div className="grid grid-cols-[1fr_340px] gap-10 mb-16">
 
-        {/* Left — 3D viewer + image thumbnails */}
-        <div className="flex flex-col gap-3">
-          <Suspense fallback={
-            <div className="bg-[#F0F0EC] rounded-3xl aspect-square flex items-center justify-center text-sm text-[#17181A]/40">
-              Loading 3D...
-            </div>
-          }>
-            <ProductViewer3D modelUrl={product.model3D || "/models/sneaker.glb"} />
-          </Suspense>
-
-          {/* Image thumbnails */}
-          {product.images?.length > 0 && (
-            <div className="flex gap-2">
-              {product.images.map((img, i) => (
+        {/* Left — image gallery */}
+        <div className="flex gap-3">
+          {/* Thumbnails column */}
+          {images.length > 1 && (
+            <div className="flex flex-col gap-2">
+              {images.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setActiveImg(i)}
-                  className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all ${
+                  className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all shrink-0 ${
                     activeImg === i ? "border-[#17181A]" : "border-transparent"
                   }`}
                 >
-                  <img src={img} alt="" className="w-full h-full object-cover" />
+                  <ProductImage src={img} alt={`view ${i + 1}`} />
                 </button>
               ))}
             </div>
           )}
+
+          {/* Main image */}
+          <div className="flex-1 bg-[#F0F0EC] rounded-3xl overflow-hidden aspect-square relative">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeImg}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="w-full h-full"
+              >
+                <ProductImage src={images[activeImg]} alt={product.name} />
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Arrow nav */}
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={() => setActiveImg((p) => (p - 1 + images.length) % images.length)}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 rounded-full flex items-center justify-center text-[#17181A] hover:bg-white transition-colors shadow-sm"
+                >‹</button>
+                <button
+                  onClick={() => setActiveImg((p) => (p + 1) % images.length)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 rounded-full flex items-center justify-center text-[#17181A] hover:bg-white transition-colors shadow-sm"
+                >›</button>
+              </>
+            )}
+
+            {images.length === 0 && (
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="w-24 h-24 rounded-full bg-[#E2E2DC]" />
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Right — product info */}
@@ -130,7 +150,6 @@ export default function ProductDetail() {
             <p className="text-sm text-[#17181A]/40 mt-0.5">{product.brand}</p>
           </div>
 
-          {/* Rating */}
           {product.numReviews > 0 && (
             <div className="flex items-center gap-2">
               <div className="flex gap-0.5">
@@ -147,7 +166,6 @@ export default function ProductDetail() {
           )}
 
           <p className="text-2xl font-bold text-[#17181A]">Rs {product.price?.toLocaleString()}</p>
-
           <p className="text-sm text-[#17181A]/60 leading-relaxed">{product.description}</p>
 
           {/* Size selector */}
@@ -190,7 +208,6 @@ export default function ProductDetail() {
             {added ? "Added to cart ✓" : "Add to cart"}
           </button>
 
-          {/* Features */}
           <div className="grid grid-cols-2 gap-2 pt-1">
             {["Free shipping", "Easy returns", "1 year warranty", "Authentic product"].map((f) => (
               <div key={f} className="flex items-center gap-2 text-xs text-[#17181A]/50">
@@ -209,10 +226,7 @@ export default function ProductDetail() {
             <p className="text-xs font-semibold uppercase tracking-widest text-[#17181A]/40">
               You might also like
             </p>
-            <Link
-              to={`/shop?category=${product.category}`}
-              className="text-xs font-medium text-[#FF4B1F] hover:underline"
-            >
+            <Link to={`/shop?category=${product.category}`} className="text-xs font-medium text-[#FF4B1F] hover:underline">
               View all →
             </Link>
           </div>
