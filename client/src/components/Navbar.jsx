@@ -7,7 +7,7 @@ import { useAuthStore } from "../context/authStore";
 export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const items = useCartStore((s) => s.items);
+  const items = useCartStore((s) => s.items ?? []);
   const { user, logout } = useAuthStore();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 

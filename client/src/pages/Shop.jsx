@@ -142,7 +142,7 @@ export default function Shop() {
     setLoading(true);
     axios.get("/api/products", { params: { category, search, limit: 100 } })
       .then((res) => {
-        let list = res.data.products;
+        let list = res.data.products ?? [];
         if (selectedSizes.length > 0) list = list.filter((p) => p.sizes?.some((s) => selectedSizes.includes(s)));
         if (priceRange) list = list.filter((p) => p.price >= priceRange.min && p.price < priceRange.max);
         if (sort === "price_asc") list = [...list].sort((a, b) => a.price - b.price);

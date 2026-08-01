@@ -63,7 +63,7 @@ function CartItem({ item, onRemove, onQtyChange }) {
 
 export default function Cart() {
   const navigate = useNavigate();
-  const { items, removeItem, addItem } = useCartStore();
+  const { items = [], removeItem, addItem } = useCartStore();
 
   const subtotal = items.reduce((sum, i) => sum + i.price * i.qty, 0);
   const totalItems = items.reduce((sum, i) => sum + i.qty, 0);

@@ -32,6 +32,11 @@ export const useCartStore = create(
 
       clearCart: () => set({ items: [] }),
     }),
-    { name: "strideco-cart" }
+    {
+      name: "strideco-cart",
+      onRehydrateStorage: () => (state) => {
+        if (state && !Array.isArray(state.items)) state.items = [];
+      },
+    }
   )
 );

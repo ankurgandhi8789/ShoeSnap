@@ -144,7 +144,7 @@ function CategoryBox({ category, label, accent, borderColor }) {
 
   useEffect(() => {
     axios.get("/api/products", { params: { category, limit: 12 } })
-      .then((res) => setProducts(res.data.products)).catch(() => {});
+      .then((res) => setProducts(res.data.products ?? [])).catch(() => {});
   }, [category]);
 
   const total = Math.ceil(products.length / PER);
