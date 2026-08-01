@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="grid grid-cols-4 gap-8 mb-10">
           {/* Brand */}
           <div className="col-span-1">
-            <Link to="/" className="text-lg font-bold text-[#17181A]">StrideCo</Link>
+            <Link to="/" className="text-lg font-bold text-[#17181A]">ShoeSnap</Link>
             <p className="text-sm text-[#17181A]/50 mt-2 leading-relaxed">
               Premium sneakers crafted for every stride. Step into the future.
             </p>
@@ -59,7 +59,7 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="flex items-center justify-between pt-6 border-t border-[#E2E2DC]">
-          <p className="text-xs text-[#17181A]/40">© {new Date().getFullYear()} StrideCo. All rights reserved.</p>
+          <p className="text-xs text-[#17181A]/40">© {new Date().getFullYear()} ShoeSnap. All rights reserved.</p>
           <div className="flex items-center gap-4">
             {/* Social icons */}
             {[

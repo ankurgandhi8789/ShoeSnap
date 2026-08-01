@@ -173,7 +173,7 @@ export default function Shop() {
             style={{ backgroundImage: "radial-gradient(circle at 20% 50%, #FF4B1F 0%, transparent 50%), radial-gradient(circle at 80% 50%, #C6FF3D 0%, transparent 50%)" }} />
           <div className="px-6 py-10 relative z-10 flex items-center justify-between">
             <div>
-              <p className="text-[#C6FF3D] text-xs font-bold uppercase tracking-widest mb-2">StrideCo Collection</p>
+              <p className="text-[#C6FF3D] text-xs font-bold uppercase tracking-widest mb-2">ShoeSnap Collection</p>
               <h1 className="text-3xl font-black text-white leading-tight">
                 {category ? (
                   <>{CAT_META[category]?.icon} <span className="capitalize">{category}</span> Shoes</>

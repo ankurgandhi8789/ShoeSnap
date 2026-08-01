@@ -72,7 +72,7 @@ export default function Checkout() {
         amount: data.amount,
         currency: "INR",
         order_id: data.id,
-        name: "StrideCo",
+        name: "ShoeSnap",
         description: "Sneaker Order",
         handler: async (response) => {
           await axios.post("/api/orders", {

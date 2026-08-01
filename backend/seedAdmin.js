@@ -8,7 +8,7 @@ async function seedAdmin() {
   await mongoose.connect(process.env.MONGO_URI);
   console.log("MongoDB connected");
 
-  const exists = await User.findOne({ email: "admin@strideco.com" });
+  const exists = await User.findOne({ email: "admin@shoesnap.com" });
   if (exists) {
     console.log("Admin already exists");
     process.exit(0);
@@ -16,12 +16,12 @@ async function seedAdmin() {
 
   await User.create({
     name: "Admin",
-    email: "admin@strideco.com",
+    email: "admin@shoesnap.com",
     password: "admin123",
     role: "admin",
   });
 
-  console.log("Admin created — email: admin@strideco.com  password: admin123");
+  console.log("Admin created — email: admin@shoesnap.com  password: admin123");
   process.exit(0);
 }
 

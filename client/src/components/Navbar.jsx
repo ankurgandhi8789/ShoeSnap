@@ -33,7 +33,7 @@ export default function Navbar() {
         <Link to="/" className="flex items-center gap-2">
           
           <span className="inline-flex items-center rounded-full border-2 border-orange-500 px-4 py-1 text-base font-bold tracking-tight text-[#17181A] bg-white/80 backdrop-blur-sm shadow-sm">
-  StrideCo
+  ShoeSnap
 </span></Link>
 
         {/* Center nav links */}
