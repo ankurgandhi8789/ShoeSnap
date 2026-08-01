@@ -1,14 +1,17 @@
 import multer from "multer";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
 import cloudinary from "../config/cloudinary.js";
+import { Readable } from "stream";
 
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: "strideco/products",
-    allowed_formats: ["jpg", "jpeg", "png", "webp"],
-    transformation: [{ width: 800, height: 800, crop: "limit", quality: "auto" }],
-  },
-});
+export const upload = multer({ storage: multer.memoryStorage() });
 
-export const upload = multer({ storage });
+export const uploadToCloudinary = (buffer) =>
+  new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "strideco/products",
+        transformation: [{ width: 800, height: 800, crop: "limit", quality: "auto" }],
+      },
+      (err, result) => (err ? reject(err) : resolve(result))
+    );
+    Readable.from(buffer).pipe(stream);
+  });
