@@ -58,9 +58,9 @@ function HeroSlider() {
               <Link to="/shop" className="bg-[#FF4B1F] text-white px-7 py-3 rounded-xl text-sm font-bold hover:bg-[#e03d10] hover:scale-105 transition-all shadow-lg shadow-[#FF4B1F]/30">
                 Shop now →
               </Link>
-              <Link to="/shop" className="border border-white/30 text-white px-7 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-all">
+              {/* <Link to="/shop" className="border border-white/30 text-white px-7 py-3 rounded-xl text-sm font-medium hover:bg-white/10 transition-all">
                 View all
-              </Link>
+              </Link> */}
             </div>
           </motion.div>
         </AnimatePresence>
